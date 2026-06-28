@@ -198,16 +198,4 @@ void oled_show_status(const char *line0, const char *line1, const char *line2, c
     if (line2) oled_draw_string(0, 32, line2);
     if (line3) oled_draw_string(0, 48, line3);
     oled_update();
-	
-	if (oled_ready) {
-    	oled_fill(true);
-    	oled_update();
-    	sleep_ms(1000);
-
-    	oled_clear();
-    	oled_draw_string(0, 0, "OLED TEST");
-    	oled_draw_string(0, 16, "I2C 0X3C");
-    	oled_update();
-	}
-	
 }

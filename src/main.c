@@ -10,40 +10,84 @@
 #include "usb_host.h"
 #include "oled.h"
 
+#include "usb_status.h"
+
 int main(void) {
-	bool oled_ready = false;
-	bool oled_test_done = false;
+    bool oled_ready = false;
+    uint32_t start_ms = to_ms_since_boot(get_absolute_time());
+    uint32_t last_oled = 0;
 
-	uint32_t start_ms = to_ms_since_boot(get_absolute_time());
-	uint32_t last_oled_ms = 0;
-
-	logger_init();
+    logger_init();
     usb_host_init();
 	
     while (true) {
-    	usb_host_task();
+		usb_host_task();
 
     	uint32_t now = to_ms_since_boot(get_absolute_time());
 
-    	if (!oled_ready && now - start_ms > 3000) {
-    	    oled_ready = oled_init();
+    	// USBを優先して、3秒後にOLED初期化
+        if (!oled_ready && now - start_ms > 3000) {
+            oled_ready = oled_init();
 
-	        if (oled_ready) {
-            	oled_fill(true);
-           		oled_update();
-            	sleep_ms(500);
+            if (oled_ready) {
+                oled_fill(true);
+                oled_update();
+                sleep_ms(300);
 
-            	oled_clear();
-            	oled_draw_string(0, 0, "OLED TEST");
-            	oled_draw_string(0, 16, "I2C 0X3C");
-            	oled_draw_string(0, 32, "USB HOST OK");
-           		oled_update();
+                oled_clear();
+                oled_printf_line(0, "OLED READY");
+                oled_printf_line(1, "USB HOST OK");
+                oled_update();
+            }
+        }
+    	
+    	// OLED更新は500msごと
+		if (oled_ready &&
+    		now-last_oled>500)
+		{
+    		last_oled=now;
 
-            	oled_test_done = true;
-        	}
-    	}
+		    oled_clear();
 
-    	sleep_ms(1);
+		    oled_printf_line(
+        		0,
+        		"USB %s",
+        		g_usb_status.usb_connected?
+        		"CONNECTED":"WAIT");
+
+		    oled_printf_line(
+        		1,
+        		"VID %04X",
+        		g_usb_status.vid);
+
+		    oled_printf_line(
+        		2,
+        		"PID %04X",
+        		g_usb_status.pid);
+
+		    oled_printf_line(
+        		3,
+		        "LEN %d",
+        		g_usb_status.report_len);
+
+		    oled_printf_line(
+        		4,
+        		"%02X %02X %02X %02X",
+        		g_usb_status.report[0],
+        		g_usb_status.report[1],
+        		g_usb_status.report[2],
+        		g_usb_status.report[3]);
+
+    		oled_printf_line(
+        		5,
+        		"%02X %02X %02X %02X",
+        		g_usb_status.report[4],
+        		g_usb_status.report[5],
+        		g_usb_status.report[6],
+        		g_usb_status.report[7]);
+
+    		oled_update();
+		}
     }
 
 
