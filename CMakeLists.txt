@@ -63,6 +63,7 @@ add_executable(zuiki_usb_pio_host
         src/hid_dispatch.c
         src/zuiki.c
         src/oled_probe.c
+        src/oled.c
         )
 
 pico_set_program_name(zuiki_usb_pio_host "zuiki_usb_pio_host")
