@@ -30,11 +30,13 @@ include(pico_sdk_import.cmake)
 
 project(zuiki_usb_pio_host C CXX ASM)
 
+# Explicitly enable TinyUSB so both native USB device and PIO-USB host are built.
+set(PICO_ENABLE_TINYUSB 1)
+
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Explicitly enable TinyUSB so both native USB device and PIO-USB host are built.
-set(PICO_ENABLE_TINYUSB 1)
+
 
 # Pico-PIO-USB provides pio_usb.h. It is fetched by TinyUSB's get_deps.py,
 # not by a direct git submodule pathspec. The VS Code task runs:
@@ -79,6 +81,7 @@ pico_enable_stdio_usb(zuiki_usb_pio_host 0)
 # tinyusb_host + pico_pio_usb are needed for the USB-A host port through PIO USB.
 target_link_libraries(zuiki_usb_pio_host
         pico_stdlib
+        pico_multicore
         tinyusb_device
         tinyusb_host
         tinyusb_board
