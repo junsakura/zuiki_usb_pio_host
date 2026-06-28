@@ -1,6 +1,12 @@
-# zuiki_pio_usb_host
+# ZUIKI USB Host for Raspberry Pi Pico / Pico 2
 
-RP2350-USB-A + Pico SDK 2.2.0 + Pico-PIO-USB 用のテスト構成です。
+USB Host機能を利用して ZUIKI製ワンハンドルマスコン を Raspberry Pi Pico / Pico 2 に接続し、HIDレポートを取得・解析するサンプルプロジェクトです。
+
+OLED(SSD1306)によるステータス表示、USB CDCによるデバッグ出力にも対応しています。
+
+## 構成
+
+RP2350-USB-A(Pico2代替) + Pico SDK 2.2.0 + Pico-PIO-USB
 Windows11で開発しています。
 
 ## 目的
@@ -18,22 +24,22 @@ C:\Users\user\zuiki_usb_cdc_host
 ```
 
 ## ビルド
+Visual Studio Codeでプロジェクトを開きます。
 
-PowerShellで:
+Ctrl + Shift + B
 
-```powershell
-cd C:\Users\user\zuiki_usb_cdc_host
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\scripts\build.ps1
-```
+または
 
-成功すると:
+mkdir build
+cd build
 
-```text
-build\zuiki_usb_cdc_host.uf2
-```
+cmake ..
 
-ができます。
+cmake --build .
+
+生成されるファイル
+
+build/zuiki_usb_pio_host.uf2
 
 ## 書き込み
 
@@ -56,10 +62,14 @@ USB-AにZuikiマスコンを接続します。
 表示例:
 
 ```text
-USB mounted: addr=1 VID=xxxx PID=xxxx
-HID mounted
-HID report addr=1 inst=0 len=... : xx xx xx ...
+
+USB CONNECTED
+VID xxxx
+PID xxxx
+LEN xx
 ```
+
+などの表示がされます。
 
 ## 注意
 
